@@ -1,37 +1,23 @@
-import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import type { NewsItem } from '../types';
-import { generateSummary, type AIAnalysis } from '../services/aiService';
+import { useAIAnalysis } from '../hooks/useAIAnalysis';
+import { ContentSkeleton } from './ContentSkeleton';
 
 interface ContentRoomProps {
   item: NewsItem;
   onBack: () => void;
 }
 
-const ContentRoom: React.FC<ContentRoomProps> = ({ item, onBack }) => {
-  const [analysis, setAnalysis] = useState<AIAnalysis | null>(null);
-  const [isSummarizing, setIsSummarizing] = useState(false);
+const ContentRoom = ({ item, onBack }: ContentRoomProps) => {
+  const { analysis, loading: isSummarizing } = useAIAnalysis(item);
 
-  // 顶部进度条
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001
   });
-
-  useEffect(() => {
-    const fetchSummary = async () => {
-      setIsSummarizing(true);
-      const contentToSummarize = item.fullContent || item.background;
-      const result = await generateSummary(contentToSummarize, item.statement);
-      setAnalysis(result);
-      setIsSummarizing(false);
-    };
-
-    fetchSummary();
-  }, [item]);
 
   return (
     <motion.div 
@@ -85,7 +71,7 @@ const ContentRoom: React.FC<ContentRoomProps> = ({ item, onBack }) => {
               </div>
               <div className="text-xs font-sans tracking-[0.2em] text-ink/30 uppercase text-right leading-loose">
                 {item.sourceName}<br/>
-                {new Date(item.publishedAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                {new Date(item.publishedAt || '').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </div>
             </div>
             
@@ -103,10 +89,7 @@ const ContentRoom: React.FC<ContentRoomProps> = ({ item, onBack }) => {
             </div>
             
             {isSummarizing ? (
-              <div className="flex justify-center items-center gap-3 text-ink/40 text-sm font-sans py-8">
-                <Loader2 size={14} className="animate-spin" />
-                <span className="animate-pulse">Distilling meaning...</span>
-              </div>
+              <ContentSkeleton />
             ) : (
               <div className="px-4 md:px-12">
                 <p className="text-xl md:text-2xl font-serif leading-[1.8] text-ink/90 text-center relative tracking-normal">
@@ -125,10 +108,7 @@ const ContentRoom: React.FC<ContentRoomProps> = ({ item, onBack }) => {
             </h2>
             
             {isSummarizing ? (
-              <div className="flex justify-center items-center gap-3 text-ink/40 text-sm font-sans py-4">
-                <Loader2 size={14} className="animate-spin" />
-                <span className="animate-pulse">Synthesizing facts...</span>
-              </div>
+              <ContentSkeleton />
             ) : (
               <div className="text-base md:text-lg font-sans leading-[2] text-ink/80 space-y-6 text-justify px-2 md:px-8 tracking-[-0.01em]">
                 {analysis?.summary.split('\n').map((paragraph, idx) => (
