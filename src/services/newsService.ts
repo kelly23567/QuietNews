@@ -44,7 +44,11 @@ export const fetchNews = async (): Promise<NewsItem[]> => {
   // If no API key is set, return local mock data
   if (!API_KEY || API_KEY === 'your_api_key_here') {
     console.warn('No API key found. Using local mock data.');
-    return newsData as NewsItem[];
+    return newsData.map(item => ({
+      ...item,
+      sourceUrl: `https://news.google.com/search?q=${encodeURIComponent(item.statement)}`,
+      sourceName: 'Google News Search'
+    })) as NewsItem[];
   }
 
   try {
@@ -54,19 +58,31 @@ export const fetchNews = async (): Promise<NewsItem[]> => {
     if (!response.ok) {
       console.error(`API Error: ${response.status} ${response.statusText}`);
       // If we hit rate limits (429) or auth errors (401), fallback
-      return newsData as NewsItem[];
+      return newsData.map(item => ({
+        ...item,
+        sourceUrl: `https://news.google.com/search?q=${encodeURIComponent(item.statement)}`,
+        sourceName: 'Google News Search'
+      })) as NewsItem[];
     }
 
     const data = await response.json();
     
     if (data.status !== 'ok') {
       console.error(`API returned error status: ${data.message}`);
-      return newsData as NewsItem[];
+      return newsData.map(item => ({
+        ...item,
+        sourceUrl: `https://news.google.com/search?q=${encodeURIComponent(item.statement)}`,
+        sourceName: 'Google News Search'
+      })) as NewsItem[];
     }
 
     if (!data.articles || data.articles.length === 0) {
       console.warn('API returned no articles. Using local mock data.');
-      return newsData as NewsItem[];
+      return newsData.map(item => ({
+        ...item,
+        sourceUrl: `https://news.google.com/search?q=${encodeURIComponent(item.statement)}`,
+        sourceName: 'Google News Search'
+      })) as NewsItem[];
     }
 
     // Map the API response to our app's format
@@ -89,7 +105,11 @@ export const fetchNews = async (): Promise<NewsItem[]> => {
 
   } catch (error) {
     console.error('Error fetching news:', error);
-    // Fallback to local data on error
-    return newsData as NewsItem[];
+    // Fallback to local data on error, but ensure they have URLs
+    return newsData.map(item => ({
+      ...item,
+      sourceUrl: `https://news.google.com/search?q=${encodeURIComponent(item.statement)}`,
+      sourceName: 'Google News Search'
+    })) as NewsItem[];
   }
 };
