@@ -145,14 +145,16 @@ const ContentRoom: React.FC<ContentRoomProps> = ({ item, onBack }) => {
                   href={item.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center gap-2 text-morandi-taupe hover:text-primary transition-colors px-6 py-3 border border-dashed border-gray-300 hover:border-morandi-taupe rounded-sm"
+                  className="group flex items-center gap-2 text-morandi-taupe hover:text-primary transition-colors px-8 py-4 border-2 border-morandi-taupe/30 hover:border-morandi-taupe rounded-sm shadow-sm hover:shadow-md bg-morandi-linen/50 hover:bg-morandi-linen"
                 >
-                  <span className="font-sans text-xs tracking-widest uppercase">Read original at {item.sourceName || "Source"}</span>
-                  <ExternalLink size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  <span className="font-sans text-sm font-bold tracking-widest uppercase">
+                    Read original at {item.sourceName || "Source"}
+                  </span>
+                  <ExternalLink size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </a>
               ) : (
-                <div className="flex items-center gap-2 text-gray-400 px-6 py-3 border border-dashed border-gray-200 rounded-sm">
-                  <span className="font-sans text-xs tracking-widest uppercase">Original link unavailable</span>
+                <div className="flex items-center gap-2 text-gray-400 px-8 py-4 border-2 border-dashed border-gray-200 rounded-sm bg-gray-50/50">
+                  <span className="font-sans text-sm tracking-widest uppercase">Original link unavailable</span>
                 </div>
               )}
             </div>
