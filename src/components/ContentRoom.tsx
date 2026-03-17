@@ -138,23 +138,20 @@ const ContentRoom: React.FC<ContentRoomProps> = ({ item, onBack }) => {
                </div>
             </div>
 
-            {/* Source Link */}
-            <div className="mt-16 pt-8 border-t border-gray-100 flex justify-center">
+            {/* Source Link - Moved up and made highly visible */}
+            <div className="mt-12 mb-20 pt-8 border-t border-gray-200 flex justify-center relative z-50">
               {item.sourceUrl ? (
                 <a 
                   href={item.sourceUrl}
-                  // Removed target="_blank" as it causes issues in some mobile webviews / PWA standalone mode
-                  // Added styling to make it look like a clear hyperlink button
-                  className="group flex flex-col items-center gap-2 text-morandi-taupe hover:text-primary transition-colors px-8 py-4 border-2 border-morandi-taupe/30 hover:border-morandi-taupe rounded-sm shadow-sm hover:shadow-md bg-morandi-linen/50 hover:bg-morandi-linen w-full max-w-sm"
+                  className="group flex flex-col items-center justify-center gap-2 text-morandi-taupe hover:text-primary transition-colors px-6 py-4 border-2 border-morandi-taupe/50 hover:border-morandi-taupe rounded-xl shadow-md hover:shadow-lg bg-white w-[90%] max-w-sm text-center"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="font-sans text-sm font-bold tracking-widest uppercase">
-                      Read original at {item.sourceName || "Source"}
+                    <ExternalLink size={20} className="text-morandi-sage" />
+                    <span className="font-sans text-base font-bold tracking-widest uppercase">
+                      查看原文链接
                     </span>
-                    <ExternalLink size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                   </div>
-                  {/* Display the actual URL string so user knows exactly where it goes */}
-                  <span className="text-[10px] text-gray-400 font-sans truncate w-full text-center px-4">
+                  <span className="text-xs text-gray-500 font-sans truncate w-full px-4">
                     {item.sourceUrl}
                   </span>
                 </a>
@@ -167,7 +164,7 @@ const ContentRoom: React.FC<ContentRoomProps> = ({ item, onBack }) => {
           </article>
           
           {/* Footer Watermark */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-gray-300 font-sans uppercase tracking-[0.5em] pointer-events-none">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-gray-300 font-sans uppercase tracking-[0.5em] pointer-events-none pb-8">
             Quiet News Network
           </div>
 
