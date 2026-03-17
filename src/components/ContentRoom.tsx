@@ -139,8 +139,8 @@ const ContentRoom: React.FC<ContentRoomProps> = ({ item, onBack }) => {
             </div>
 
             {/* Source Link */}
-            {item.sourceUrl && (
-              <div className="mt-16 pt-8 border-t border-gray-100 flex justify-center">
+            <div className="mt-16 pt-8 border-t border-gray-100 flex justify-center">
+              {item.sourceUrl ? (
                 <a 
                   href={item.sourceUrl}
                   target="_blank"
@@ -150,8 +150,12 @@ const ContentRoom: React.FC<ContentRoomProps> = ({ item, onBack }) => {
                   <span className="font-sans text-xs tracking-widest uppercase">Read original at {item.sourceName || "Source"}</span>
                   <ExternalLink size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </a>
-              </div>
-            )}
+              ) : (
+                <div className="flex items-center gap-2 text-gray-400 px-6 py-3 border border-dashed border-gray-200 rounded-sm">
+                  <span className="font-sans text-xs tracking-widest uppercase">Original link unavailable</span>
+                </div>
+              )}
+            </div>
           </article>
           
           {/* Footer Watermark */}
