@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  background-color: #FDFBF7; /* Paper background */
+  color: #4A4A4A;
+  font-family: "Quicksand", sans-serif; /* Default to friendly sans */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Custom Scrollbar for a cleaner look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+::-webkit-scrollbar-thumb {
+  background: #D4C4B7; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B9ADA2; 
+}
+
+/* Realistic Paper Texture - Noise */
+.bg-paper-realistic {
+  background-color: #FDFBF7;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+/* Journal / Scrapbook Utilities */
+.mask-image-tape {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h10v10H0z' fill='%23000'/%3E%3Cpath d='M0 0l2 2 2-2 2 2 2-2v10l-2-2-2 2-2-2-2 2-2-2z' fill='%23000'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h10v10H0z' fill='%23000'/%3E%3Cpath d='M0 0l2 2 2-2 2 2 2-2v10l-2-2-2 2-2-2-2 2-2-2z' fill='%23000'/%3E%3C/svg%3E");
+  mask-size: 20px 100%;
+}
+
+.paper-edge {
+  mask-image: linear-gradient(to bottom, transparent, black 1%, black 99%, transparent);
+}
+
+.tape-strip {
+  position: absolute;
+  height: 30px;
+  width: 120px;
+  background-color: rgba(229, 221, 208, 0.6); /* Morandi Sand with opacity */
+  transform: rotate(-2deg);
+  z-index: 10;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  backdrop-filter: blur(1px);
+}
+
+.tape-strip::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent);
+  background-size: 4px 4px;
+  opacity: 0.5;
+}
+
+.sticker-effect {
+  border: 2px solid white;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.08);
+  transform: rotate(1deg);
+  transition: transform 0.3s ease;
+}
+
+.sticker-effect:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.handwritten-note {
+  font-family: 'Caveat', cursive;
+  color: #6B6B6B;
+  transform: rotate(-1deg);
+}
+
+.polaroid-frame {
+  background: white;
+  padding: 10px 10px 30px 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transform: rotate(1deg);
+}
