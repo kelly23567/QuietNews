@@ -6,6 +6,14 @@ import type { NewsItem } from '../types';
 const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 const BASE_URL = 'https://newsapi.org/v2/top-headlines';
 
+const getLocalFallback = (): NewsItem[] => {
+  return newsData.map(item => ({
+    ...item,
+    sourceUrl: `https://news.google.com/search?q=${encodeURIComponent(item.statement)}`,
+    sourceName: 'Google News Search'
+  })) as NewsItem[];
+};
+
 export interface NewsAPIArticle {
   source: {
     id: string | null;
@@ -36,7 +44,7 @@ const determineImportance = (article: NewsAPIArticle): string => {
 };
 
 // Helper to determine "relevance" (mock logic)
-const determineRelevance = (_article: NewsAPIArticle): string => {
+const determineRelevance = (): string => {
   return ['Global', 'National', 'Industry', 'Economic'][Math.floor(Math.random() * 4)];
 };
 
@@ -44,11 +52,7 @@ export const fetchNews = async (): Promise<NewsItem[]> => {
   // If no API key is set, return local mock data
   if (!API_KEY || API_KEY === 'your_api_key_here') {
     console.warn('No API key found. Using local mock data.');
-    return newsData.map(item => ({
-      ...item,
-      sourceUrl: `https://news.google.com/search?q=${encodeURIComponent(item.statement)}`,
-      sourceName: 'Google News Search'
-    })) as NewsItem[];
+    return getLocalFallback();
   }
 
   try {
@@ -95,7 +99,7 @@ export const fetchNews = async (): Promise<NewsItem[]> => {
         statement: article.title || 'No Title',
         background: article.description || 'No context available.',
         importance: determineImportance(article),
-        relevance: determineRelevance(article),
+        relevance: determineRelevance(),
         fullContent: cleanText(article.content) || article.description || 'Content unavailable via API. Please visit the source.',
         sourceUrl: article.url || fallbackUrl,
         sourceName: article.source.name || 'External Source',
@@ -106,10 +110,6 @@ export const fetchNews = async (): Promise<NewsItem[]> => {
   } catch (error) {
     console.error('Error fetching news:', error);
     // Fallback to local data on error, but ensure they have URLs
-    return newsData.map(item => ({
-      ...item,
-      sourceUrl: `https://news.google.com/search?q=${encodeURIComponent(item.statement)}`,
-      sourceName: 'Google News Search'
-    })) as NewsItem[];
+    return getLocalFallback();
   }
 };

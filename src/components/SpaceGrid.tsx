@@ -2,6 +2,13 @@ import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
 import type { NewsItem } from '../types';
+import { cn } from '../lib/utils';
+
+function seededRandom(seed: number): number {
+  const s = seed * 2654435761;
+  const x = Math.sin(s) * 10000;
+  return x - Math.floor(x);
+}
 
 interface SpaceGridProps {
   items: NewsItem[];
@@ -29,18 +36,18 @@ const SpaceGrid: React.FC<SpaceGridProps> = ({ items, onSelect, onRefresh, readI
       'bg-quiet-sand',
       'bg-quiet-rose',
       'bg-quiet-fog',
-      'bg-paper', // some can just be white-ish
+      'bg-paper',
     ];
 
-    return items.map((_, i) => {
-      // 0.5 to 1 degree tilt, randomly left or right
-      const sign = Math.random() > 0.5 ? 1 : -1;
-      const rotation = sign * (0.5 + Math.random() * 0.5); 
-      
-      const tapeRotation = (Math.random() - 0.5) * 4; // tape slightly angled
-      
+    return items.map((item) => {
+      const r1 = seededRandom(item.id);
+      const r2 = seededRandom(item.id + 1000);
+      const sign = r1 > 0.5 ? 1 : -1;
+      const rotation = sign * (0.5 + r1 * 0.5);
+      const tapeRotation = (r2 - 0.5) * 4;
+
       return {
-        color: colors[i % colors.length],
+        color: colors[item.id % colors.length],
         rotation,
         tapeRotation,
       };
@@ -128,12 +135,12 @@ const SpaceGrid: React.FC<SpaceGridProps> = ({ items, onSelect, onRefresh, readI
                   } : {}}
                 >
                   {/* Card Body - "Real Object" */}
-                  <div className={`
-                    relative flex-grow flex flex-col p-8 md:p-10 min-h-[32rem] max-w-[20rem] mx-auto w-full
-                    ${style.color} rounded-[2px]
-                    shadow-paper hover:shadow-paper-hover transition-shadow duration-500
-                    border border-black/[0.04]
-                  `}>
+                  <div className={cn(
+                    'relative flex-grow flex flex-col p-8 md:p-10 min-h-[32rem] max-w-[20rem] mx-auto w-full',
+                    style.color,
+                    'rounded-[2px] shadow-paper hover:shadow-paper-hover transition-shadow duration-500',
+                    'border border-black/[0.04]'
+                  )}>
                      
                      {/* Washi Tape */}
                      <div 
