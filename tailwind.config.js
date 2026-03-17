@@ -7,52 +7,26 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        serif: ['"Playfair Display"', 'serif'],
-        sans: ['"Quicksand"', 'sans-serif'],
+        serif: ['"Noto Serif SC"', 'serif'],
+        sans: ['"Inter"', 'sans-serif'],
         hand: ['"Caveat"', 'cursive'],
       },
       colors: {
-        primary: '#4A4A4A', // Soft charcoal
-        secondary: '#FDFBF7', // Paper white
-        accent: '#D4C4B7', // Warm beige accent
-        morandi: {
-          sage: '#A3B5A5', // Soft dusty green
-          rose: '#DBCBCB', // Dusty pink
-          taupe: '#B9ADA2', // Warm grey-brown
-          fog: '#9BA9B0', // Blue-grey
-          sand: '#E5DDD0', // Light beige
-          clay: '#C8B6A6', // Reddish brown
-          oat: '#F0EAD6', // Creamy white
-          linen: '#EAE6DA', // Textured white
-        },
-        paper: '#FDFBF7',
-      },
-      animation: {
-        'fade-in': 'fadeIn 0.8s ease-out forwards',
-        'float': 'float 6s ease-in-out infinite',
-        'paper-float': 'paperFloat 4s ease-in-out infinite',
-      },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
-        },
-        paperFloat: {
-          '0%, 100%': { transform: 'rotate(-1deg) translateY(0)' },
-          '50%': { transform: 'rotate(1deg) translateY(-5px)' },
+        ink: '#2A2A2A', // Softer off-black for elegant reading
+        paper: '#F4F1EA', // Warm, authentic old paper color (not too white)
+        'paper-desk': '#E8E5DF', // The desk background - provides contrast to the paper
+        quiet: {
+          sage: '#EBEFE9', // Extremely pale sage
+          sand: '#F4F1EA', // Very pale sand
+          rose: '#F2EBEB', // Whisper of rose
+          fog:  '#EBECEF', // Mist-like gray blue
+          taupe: '#DCD8D3', // Muted warm gray
+          border: '#E8E8E8',
         }
       },
-      backgroundImage: {
-        'paper-texture': "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjRkRGQkY3Ii8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNDQ0MiIG9wYWNpdHk9IjAuMSIvPgo8L3N2Zz4=')",
-        'washi-tape': "linear-gradient(45deg, rgba(255,255,255,0.8) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.8) 75%, transparent 75%, transparent)",
-      },
       boxShadow: {
-        'sticker': '2px 2px 5px rgba(0,0,0,0.1)',
-        'polaroid': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        'paper': '0 2px 10px rgba(0,0,0,0.02), 0 1px 3px rgba(0,0,0,0.01)',
+        'paper-hover': '0 8px 20px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02)',
       }
     },
   },

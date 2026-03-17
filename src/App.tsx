@@ -9,18 +9,17 @@ const App: React.FC = () => {
   const [todaysNews, setTodaysNews] = useState<NewsItem[]>([]);
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [readItems, setReadItems] = useState<Set<number>>(new Set());
 
   const loadNews = async () => {
     setLoading(true);
     try {
       const news = await fetchNews();
-      // If we got enough news, randomize a bit or just take top 8
-      // Ensure we have an array
       const safeNews = Array.isArray(news) ? news : [];
-      setTodaysNews(safeNews.slice(0, 8)); 
+      setTodaysNews(safeNews.slice(0, 9)); 
     } catch (error) {
       console.error("Critical error loading news:", error);
-      setTodaysNews([]); // Should ideally show an error message
+      setTodaysNews([]);
     } finally {
       setLoading(false);
     }
@@ -32,6 +31,11 @@ const App: React.FC = () => {
 
   const handleSelectNews = (item: NewsItem) => {
     setSelectedNews(item);
+    setReadItems(prev => {
+      const newSet = new Set(prev);
+      newSet.add(item.id);
+      return newSet;
+    });
   };
 
   const handleBack = () => {
@@ -40,19 +44,24 @@ const App: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-morandi-linen flex flex-col items-center justify-center text-primary">
-        <Loader2 className="animate-spin mb-4 text-morandi-taupe" size={48} />
-        <p className="font-serif tracking-widest text-sm text-gray-500">GATHERING STORIES...</p>
+      <div className="min-h-screen bg-paper flex flex-col items-center justify-center text-ink">
+        <Loader2 className="animate-spin mb-4 text-quiet-taupe" size={32} strokeWidth={1} />
+        <p className="font-sans tracking-[0.2em] text-xs text-gray-400">PREPARING DESK...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-morandi-linen text-primary font-sans antialiased selection:bg-morandi-rose/30">
+    <div className="min-h-screen bg-paper text-ink font-sans antialiased selection:bg-quiet-taupe/30">
       {selectedNews ? (
         <ContentRoom item={selectedNews} onBack={handleBack} />
       ) : (
-        <SpaceGrid items={todaysNews} onSelect={handleSelectNews} onRefresh={loadNews} />
+        <SpaceGrid 
+          items={todaysNews} 
+          onSelect={handleSelectNews} 
+          onRefresh={loadNews} 
+          readItems={readItems}
+        />
       )}
     </div>
   );

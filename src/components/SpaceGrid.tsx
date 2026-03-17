@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
 import type { NewsItem } from '../types';
 
@@ -7,154 +7,170 @@ interface SpaceGridProps {
   items: NewsItem[];
   onSelect: (item: NewsItem) => void;
   onRefresh: () => void;
+  readItems: Set<number>;
 }
 
-const SpaceGrid: React.FC<SpaceGridProps> = ({ items, onSelect, onRefresh }) => {
-  // Track which item is being peeled off
+const SpaceGrid: React.FC<SpaceGridProps> = ({ items, onSelect, onRefresh, readItems }) => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [peelingId, setPeelingId] = useState<number | null>(null);
 
-  // Pre-calculate random styles to ensure consistency during renders
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    // Simulate slight delay and page flip
+    setTimeout(() => {
+      onRefresh();
+      setIsRefreshing(false);
+    }, 600);
+  };
+
   const itemStyles = useMemo(() => {
     const colors = [
-      'bg-morandi-sage/80',
-      'bg-morandi-rose/80',
-      'bg-morandi-taupe/80',
-      'bg-morandi-fog/80',
-      'bg-morandi-clay/80',
-      'bg-morandi-sand/80',
+      'bg-quiet-sage',
+      'bg-quiet-sand',
+      'bg-quiet-rose',
+      'bg-quiet-fog',
+      'bg-paper', // some can just be white-ish
     ];
 
     return items.map((_, i) => {
-      // Instead of blobs, we use sticky note / polaroid shapes
-      const rotation = (Math.random() - 0.5) * 10; // -5 to 5 degrees
+      // 0.5 to 1 degree tilt, randomly left or right
+      const sign = Math.random() > 0.5 ? 1 : -1;
+      const rotation = sign * (0.5 + Math.random() * 0.5); 
       
-      // Random position offsets for "scattered on desk" look
-      const translateX = (Math.random() - 0.5) * 40; 
-      const translateY = (Math.random() - 0.5) * 40; 
-
-      const size = 200 + Math.random() * 60; 
-
+      const tapeRotation = (Math.random() - 0.5) * 4; // tape slightly angled
+      
       return {
         color: colors[i % colors.length],
         rotation,
-        width: `${size}px`,
-        height: `${size}px`, // Make them square-ish for sticky notes
-        translateX,
-        translateY,
-        tapeRotation: (Math.random() - 0.5) * 20, // Tape rotation
+        tapeRotation,
       };
     });
   }, [items]);
 
   const handleItemClick = (item: NewsItem) => {
     setPeelingId(item.id);
-    // Delay the actual navigation slightly to allow the animation to play
     setTimeout(() => {
       onSelect(item);
-    }, 400); // 0.4s delay matches the animation duration
+    }, 400);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-paper-realistic overflow-hidden relative">
-      {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-full h-2 bg-morandi-sage/30"></div>
-      <div className="absolute bottom-0 left-0 w-full h-2 bg-morandi-rose/30"></div>
-
-      <div className="absolute top-12 left-0 right-0 text-center z-10 flex flex-col items-center gap-4">
-        <div className="inline-block relative px-8 py-3 bg-white shadow-sm rotate-[-1deg]">
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-6 bg-morandi-taupe/40 rotate-1 mask-image-tape backdrop-blur-sm"></div>
-          <div className="text-sm text-gray-500 font-serif tracking-[0.3em] uppercase">
-            Quiet News Collection
-          </div>
+    <div className="min-h-screen bg-paper-desk flex flex-col relative overflow-hidden font-sans selection:bg-quiet-taupe/30">
+      
+      {/* Top Bar */}
+      <header className="w-full flex justify-between items-center p-8 z-10 relative">
+        <div className="text-xs tracking-[0.3em] uppercase text-ink/40 font-sans">
+          Quiet News
         </div>
         
-        {/* Refresh Button */}
         <button 
-          onClick={onRefresh}
-          className="group flex items-center gap-2 px-4 py-2 bg-white/50 hover:bg-white/80 backdrop-blur-sm border border-morandi-taupe/30 rounded-full text-morandi-taupe hover:text-primary transition-all shadow-sm"
-          aria-label="Fetch latest news"
+          onClick={handleRefresh}
+          className="flex items-center gap-2 px-4 py-2 text-ink/40 hover:text-ink/80 transition-colors"
+          aria-label="Refresh Desk"
         >
-          <RefreshCw size={16} className="group-hover:rotate-180 transition-transform duration-500" />
-          <span className="font-sans text-xs tracking-widest uppercase">Refresh Desk</span>
+          <motion.div
+            animate={isRefreshing ? { rotate: 360 } : { rotate: 0 }}
+            transition={{ duration: 1, ease: "easeInOut" }}
+          >
+            <RefreshCw size={14} />
+          </motion.div>
+          <span className="text-[10px] tracking-widest uppercase">Refresh</span>
         </button>
-      </div>
+      </header>
 
-      <div className="w-full max-w-6xl mx-auto flex flex-wrap justify-center items-center content-center gap-16 md:gap-24 py-20 min-h-[80vh]">
-        {items.map((item, index) => {
-          const style = itemStyles[index];
-          const isPeeling = peelingId === item.id;
+      {/* Main Grid */}
+      <main className="flex-grow flex items-center justify-center p-8">
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={items.length > 0 ? items[0].id : 'empty'}
+            className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16"
+            initial={isRefreshing ? { opacity: 0, rotateX: 90, y: 50 } : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, rotateX: 0, y: 0 }}
+            exit={{ opacity: 0, rotateX: -90, y: -50 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+          >
+            {items.map((item, index) => {
+              const style = itemStyles[index];
+              const isRead = readItems.has(item.id);
+              const isPeeling = peelingId === item.id;
 
-          return (
-            <motion.div
-              key={item.id}
-              className="relative group cursor-pointer"
-              style={{
-                width: style.width,
-                height: style.height,
-                transformOrigin: 'top center', // Pivot point for the peel
-              }}
-              onClick={() => handleItemClick(item)}
-              initial={{ opacity: 0, scale: 0.8, rotate: style.rotation + 10 }}
-              animate={isPeeling ? {
-                // "Peel off" animation:
-                // 1. Scale up slightly
-                // 2. Rotate to straighten or tilt
-                // 3. Lift up (Y axis translation and shadow)
-                // 4. Skew to simulate bending paper
-                scale: 1.1,
-                rotate: -5, 
-                y: -50,
-                x: -20,
-                opacity: 0, // Fade out at the end
-                filter: "drop-shadow(20px 20px 15px rgba(0,0,0,0.2))", // Deep shadow when lifted
-              } : { 
-                opacity: 1, 
-                scale: 1,
-                rotate: style.rotation,
-                x: style.translateX,
-                y: style.translateY,
-                filter: "drop-shadow(0px 4px 6px rgba(0,0,0,0.1))",
-              }}
-              transition={{ 
-                duration: isPeeling ? 0.4 : 1.2, 
-                delay: isPeeling ? 0 : index * 0.1, 
-                type: isPeeling ? "tween" : "spring",
-                ease: isPeeling ? "backIn" : undefined,
-                stiffness: 50
-              }}
-              whileHover={!isPeeling ? { 
-                scale: 1.05, 
-                rotate: 0,
-                zIndex: 20,
-                filter: "drop-shadow(0px 10px 15px rgba(0,0,0,0.15))",
-                transition: { duration: 0.3 }
-              } : {}}
-            >
-              {/* Sticky Note Body */}
-              <div className={`absolute inset-0 ${style.color} transition-colors duration-300 flex items-center justify-center p-6 text-center backdrop-blur-sm`}>
-                 {/* Tape on top - fades out when peeling */}
-                 <motion.div 
-                   className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-white/40 mask-image-tape"
-                   style={{ transform: `translateX(-50%) rotate(${style.tapeRotation}deg)` }}
-                   animate={isPeeling ? { opacity: 0 } : { opacity: 1 }}
-                 ></motion.div>
+              return (
+                <motion.div
+                  key={item.id}
+                  className="relative group cursor-pointer flex flex-col"
+                  style={{
+                    transformOrigin: 'top center',
+                  }}
+                  onClick={() => handleItemClick(item)}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isPeeling ? {
+                    scale: 1.05,
+                    rotate: -2, 
+                    y: -30,
+                    opacity: 0,
+                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.1)',
+                  } : { 
+                    opacity: isRead ? 0.9 : 1, 
+                    y: 0,
+                    rotate: style.rotation,
+                    filter: isRead ? 'grayscale(10%)' : 'none',
+                  }}
+                  transition={{ 
+                    duration: isPeeling ? 0.4 : 0.8, 
+                    delay: isPeeling ? 0 : index * 0.1,
+                    ease: [0.22, 1, 0.36, 1]
+                  }}
+                  whileHover={!isPeeling ? { 
+                    scale: 1.02, 
+                    rotate: 0,
+                    zIndex: 20,
+                    transition: { duration: 0.4, ease: "easeOut" }
+                  } : {}}
+                >
+                  {/* Card Body - "Real Object" */}
+                  <div className={`
+                    relative flex-grow flex flex-col p-8 md:p-10 min-h-[32rem] max-w-[20rem] mx-auto w-full
+                    ${style.color} rounded-[2px]
+                    shadow-paper hover:shadow-paper-hover transition-shadow duration-500
+                    border border-black/[0.04]
+                  `}>
+                     
+                     {/* Washi Tape */}
+                     <div 
+                       className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-5 bg-white/30 backdrop-blur-md shadow-sm border border-white/40 rounded-[1px]"
+                       style={{ 
+                         transform: `translateX(-50%) rotate(${style.tapeRotation}deg)`,
+                         // Subtle texture for tape
+                         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E")`
+                       }}
+                     />
 
-                 <p className="font-hand text-2xl text-white drop-shadow-sm leading-tight select-none">
-                   {item.statement}
-                 </p>
-                 
-                 {/* Fold corner effect (static for now, enhances the paper look) */}
-                 <div className="absolute bottom-0 right-0 w-8 h-8 bg-black/10" 
-                      style={{ 
-                        clipPath: 'polygon(100% 0, 0 100%, 100% 100%)',
-                        borderBottomRightRadius: '2px'
-                      }}>
-                 </div>
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
+                     {/* Content */}
+                     <div className="mt-4 mb-8 flex-grow">
+                       {/* Tag - Handwriting */}
+                       <div className="mb-6 font-hand text-xl text-ink/40 -rotate-2 inline-block">
+                         {item.relevance}
+                       </div>
+                       
+                       {/* Title - Serif */}
+                       <h2 className="font-serif text-2xl md:text-[1.75rem] text-ink leading-[1.5] tracking-wide line-clamp-none">
+                         {item.statement}
+                       </h2>
+                     </div>
+
+                     {/* Footer */}
+                     <div className="mt-auto pt-6 border-t border-ink/5 flex justify-between items-center text-[10px] font-sans tracking-[0.2em] text-ink/30 uppercase">
+                       <span>{item.sourceName}</span>
+                       <span>{item.importance}</span>
+                     </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </AnimatePresence>
+      </main>
+
     </div>
   );
 };
