@@ -143,17 +143,23 @@ const ContentRoom: React.FC<ContentRoomProps> = ({ item, onBack }) => {
               {item.sourceUrl ? (
                 <a 
                   href={item.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center gap-2 text-morandi-taupe hover:text-primary transition-colors px-8 py-4 border-2 border-morandi-taupe/30 hover:border-morandi-taupe rounded-sm shadow-sm hover:shadow-md bg-morandi-linen/50 hover:bg-morandi-linen"
+                  // Removed target="_blank" as it causes issues in some mobile webviews / PWA standalone mode
+                  // Added styling to make it look like a clear hyperlink button
+                  className="group flex flex-col items-center gap-2 text-morandi-taupe hover:text-primary transition-colors px-8 py-4 border-2 border-morandi-taupe/30 hover:border-morandi-taupe rounded-sm shadow-sm hover:shadow-md bg-morandi-linen/50 hover:bg-morandi-linen w-full max-w-sm"
                 >
-                  <span className="font-sans text-sm font-bold tracking-widest uppercase">
-                    Read original at {item.sourceName || "Source"}
+                  <div className="flex items-center gap-2">
+                    <span className="font-sans text-sm font-bold tracking-widest uppercase">
+                      Read original at {item.sourceName || "Source"}
+                    </span>
+                    <ExternalLink size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  </div>
+                  {/* Display the actual URL string so user knows exactly where it goes */}
+                  <span className="text-[10px] text-gray-400 font-sans truncate w-full text-center px-4">
+                    {item.sourceUrl}
                   </span>
-                  <ExternalLink size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </a>
               ) : (
-                <div className="flex items-center gap-2 text-gray-400 px-8 py-4 border-2 border-dashed border-gray-200 rounded-sm bg-gray-50/50">
+                <div className="flex flex-col items-center gap-2 text-gray-400 px-8 py-4 border-2 border-dashed border-gray-200 rounded-sm bg-gray-50/50 w-full max-w-sm">
                   <span className="font-sans text-sm tracking-widest uppercase">Original link unavailable</span>
                 </div>
               )}
