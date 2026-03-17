@@ -10,23 +10,23 @@ const App: React.FC = () => {
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadNews = async () => {
-      setLoading(true);
-      try {
-        const news = await fetchNews();
-        // If we got enough news, randomize a bit or just take top 8
-        // Ensure we have an array
-        const safeNews = Array.isArray(news) ? news : [];
-        setTodaysNews(safeNews.slice(0, 8)); 
-      } catch (error) {
-        console.error("Critical error loading news:", error);
-        setTodaysNews([]); // Should ideally show an error message
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadNews = async () => {
+    setLoading(true);
+    try {
+      const news = await fetchNews();
+      // If we got enough news, randomize a bit or just take top 8
+      // Ensure we have an array
+      const safeNews = Array.isArray(news) ? news : [];
+      setTodaysNews(safeNews.slice(0, 8)); 
+    } catch (error) {
+      console.error("Critical error loading news:", error);
+      setTodaysNews([]); // Should ideally show an error message
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     loadNews();
   }, []);
 
@@ -52,7 +52,7 @@ const App: React.FC = () => {
       {selectedNews ? (
         <ContentRoom item={selectedNews} onBack={handleBack} />
       ) : (
-        <SpaceGrid items={todaysNews} onSelect={handleSelectNews} />
+        <SpaceGrid items={todaysNews} onSelect={handleSelectNews} onRefresh={loadNews} />
       )}
     </div>
   );

@@ -70,17 +70,22 @@ export const fetchNews = async (): Promise<NewsItem[]> => {
     }
 
     // Map the API response to our app's format
-    return data.articles.map((article: NewsAPIArticle, index: number) => ({
-      id: index + 1000, // Offset IDs to avoid conflicts
-      statement: article.title || 'No Title',
-      background: article.description || 'No context available.',
-      importance: determineImportance(article),
-      relevance: determineRelevance(article),
-      fullContent: cleanText(article.content) || article.description || 'Content unavailable via API. Please visit the source.',
-      sourceUrl: article.url,
-      sourceName: article.source.name,
-      publishedAt: article.publishedAt,
-    }));
+    return data.articles.map((article: NewsAPIArticle, index: number) => {
+      // Fallback URL: If the API doesn't provide a URL, generate a Google News search link based on the title
+      const fallbackUrl = `https://news.google.com/search?q=${encodeURIComponent(article.title || 'news')}`;
+      
+      return {
+        id: index + 1000, // Offset IDs to avoid conflicts
+        statement: article.title || 'No Title',
+        background: article.description || 'No context available.',
+        importance: determineImportance(article),
+        relevance: determineRelevance(article),
+        fullContent: cleanText(article.content) || article.description || 'Content unavailable via API. Please visit the source.',
+        sourceUrl: article.url || fallbackUrl,
+        sourceName: article.source.name || 'External Source',
+        publishedAt: article.publishedAt,
+      };
+    });
 
   } catch (error) {
     console.error('Error fetching news:', error);
