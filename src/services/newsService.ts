@@ -36,7 +36,7 @@ const determineImportance = (article: NewsAPIArticle): string => {
 };
 
 // Helper to determine "relevance" (mock logic)
-const determineRelevance = (article: NewsAPIArticle): string => {
+const determineRelevance = (_article: NewsAPIArticle): string => {
   return ['Global', 'National', 'Industry', 'Economic'][Math.floor(Math.random() * 4)];
 };
 

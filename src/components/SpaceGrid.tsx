@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import type { NewsItem } from '../types';
 
 interface SpaceGridProps {
@@ -107,7 +107,7 @@ const SpaceGrid: React.FC<SpaceGridProps> = ({ items, onSelect }) => {
                 duration: isPeeling ? 0.4 : 1.2, 
                 delay: isPeeling ? 0 : index * 0.1, 
                 type: isPeeling ? "tween" : "spring",
-                ease: isPeeling ? "backIn" : "spring",
+                ease: isPeeling ? "backIn" : undefined,
                 stiffness: 50
               }}
               whileHover={!isPeeling ? { 
